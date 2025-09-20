@@ -1,0 +1,5 @@
+button.c:47:6:buttonsInit	16	static
+button.c:59:5:verifyState	16	static
+button.c:75:6:buttonsFSM	16	static
+button.c:124:5:buttonIsPressed	16	static
+button.c:129:5:buttonIsHold	16	static

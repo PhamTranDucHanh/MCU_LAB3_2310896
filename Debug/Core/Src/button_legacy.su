@@ -1,0 +1,4 @@
+button_legacy.c:43:6:buttonsInit	16	static
+button_legacy.c:57:6:buttonsFSM	16	static
+button_legacy.c:124:5:buttonIsPressed	16	static
+button_legacy.c:129:5:buttonIsHold	16	static

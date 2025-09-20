@@ -1,0 +1,9 @@
+lab3_fsm.c:26:6:displayRed1	8	static
+lab3_fsm.c:32:6:displayYellow1	8	static
+lab3_fsm.c:38:6:displayGreen1	8	static
+lab3_fsm.c:44:6:displayRed2	8	static
+lab3_fsm.c:50:6:displayYellow2	8	static
+lab3_fsm.c:56:6:displayGreen2	8	static
+lab3_fsm.c:62:6:displayNone	8	static
+lab3_fsm.c:74:6:lab3_fsm1	8	static
+lab3_fsm.c:132:6:lab3_fsm2	8	static
