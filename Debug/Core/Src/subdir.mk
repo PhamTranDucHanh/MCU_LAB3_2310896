@@ -7,6 +7,7 @@
 C_SRCS += \
 ../Core/Src/button.c \
 ../Core/Src/button_optimize.c \
+../Core/Src/display.c \
 ../Core/Src/lab3_fsm.c \
 ../Core/Src/main.c \
 ../Core/Src/software_timer.c \
@@ -19,6 +20,7 @@ C_SRCS += \
 OBJS += \
 ./Core/Src/button.o \
 ./Core/Src/button_optimize.o \
+./Core/Src/display.o \
 ./Core/Src/lab3_fsm.o \
 ./Core/Src/main.o \
 ./Core/Src/software_timer.o \
@@ -31,6 +33,7 @@ OBJS += \
 C_DEPS += \
 ./Core/Src/button.d \
 ./Core/Src/button_optimize.d \
+./Core/Src/display.d \
 ./Core/Src/lab3_fsm.d \
 ./Core/Src/main.d \
 ./Core/Src/software_timer.d \

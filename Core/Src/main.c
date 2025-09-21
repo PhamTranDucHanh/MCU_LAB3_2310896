@@ -95,10 +95,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-  buttonsInit(GPIOA, BUTTON1_Pin);
-  buttonsInit(GPIOA, BUTTON2_Pin);
-  buttonsInit(GPIOA, BUTTON3_Pin);
+  //int test1 = 0, test2 = 0;
+  timerSet(6, 25);
+  timerSet(7, 500);
+  buttonsInitO(GPIOA, BUTTON1_Pin);
+  buttonsInitO(GPIOA, BUTTON2_Pin);
+  buttonsInitO(GPIOA, BUTTON3_Pin);
   HAL_GPIO_WritePin(GPIOA, EN1W1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, EN2W1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, EN1W2_Pin, GPIO_PIN_SET);
@@ -106,15 +108,23 @@ int main(void)
 
   while (1)
   {
-	  buttonsFSM();
-	  if (buttonIsPressed(0) || buttonIsPressed(1) || buttonIsPressed(2)){
+	  buttonsFSMO1(0);
+	  buttonsFSMO2(1);
+	  buttonsFSMO3(2);
+	  if (buttonIsPressedO(0) || buttonIsPressedO(1) || buttonIsPressedO(2)){
 		 HAL_GPIO_TogglePin(GPIOA, LED_RED_Pin);
 	  }
-	  if (buttonIsHold(0) || buttonIsHold(1) || buttonIsHold(2)){
+	  if (buttonIsHoldO(0) || buttonIsHoldO(1) || buttonIsHoldO(2)){
 		  HAL_GPIO_TogglePin(GPIOA, LED_RED_Pin);
 	  }
 	  lab3_fsm1();
 	  lab3_fsm2();
+
+//	  displayNumbers(test1, test2);
+//	  if (timerFlag(7)){
+//		  timerSet(7, 1000);
+//		  test1++; test2++;
+//	  }
 
     /* USER CODE END WHILE */
 

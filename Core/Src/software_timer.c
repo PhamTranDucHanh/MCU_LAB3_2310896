@@ -8,7 +8,7 @@
 
 #include "software_timer.h"
 #define timer_cycle 	10
-#define NO_OF_TIMER		7
+#define NO_OF_TIMER		10
 struct TimerStruct timerArray[NO_OF_TIMER];
 
 void timerSet(int idx, int counter){

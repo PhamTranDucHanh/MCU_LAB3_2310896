@@ -10,7 +10,10 @@
 #include "main.h"
 
 void buttonsInitO(GPIO_TypeDef *PORT, uint16_t PIN);
-void buttonsFSMO ();
+//void buttonsFSMO ();
+void buttonsFSMO1 (int i);
+void buttonsFSMO2(int i);
+void buttonsFSMO3 (int i);
 int buttonIsPressedO (int index);
 int buttonIsHoldO (int index);
 

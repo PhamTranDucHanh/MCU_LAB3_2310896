@@ -58,7 +58,7 @@ void buttonsInit(GPIO_TypeDef *PORT, uint16_t PIN){
 
 int verifyState(int i){
 	if (timerFlag(DEBOUNCE_TIMER)){
-		timerSet(DEBOUNCE_TIMER, DEBOUNCE_DUR);
+		timerSet(DEBOUNCE_TIMER, DEBOUNCE_DUR);   //Bug ở đây.
 		validPress[i] = filterPress1[i];
 		filterPress1[i] = filterPress2[i];
 		filterPress2[i] = HAL_GPIO_ReadPin(ButtonArray[i].PORT, ButtonArray[i].PIN);
