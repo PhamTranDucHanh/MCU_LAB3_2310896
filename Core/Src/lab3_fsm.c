@@ -6,13 +6,17 @@
  */
 
 #include "lab3_fsm.h"
-#define fsm1_timer 	4
-#define fsm2_timer	5
-#define fsm_dur		1000
+#define fsm1_timer 		4
+#define fsm2_timer		5
+#define fsm_dur			500
 
-#define mode_butt	0
-#define change_butt 1
-#define set_butt	2
+#define mode_butt		0
+#define change_butt 	1
+#define set_butt		2
+
+#define red_default		5
+#define green_default	3
+#define yellow_default	2
 
 typedef enum{
 	INIT,
@@ -27,16 +31,16 @@ typedef enum{
 traffic_state currentState1 = INIT;
 traffic_state currentState2 = INIT;
 
-int GREEN_DUR = 3;
-int RED_DUR = 5;
-int YELLOW_DUR = 2;
+int GREEN_DUR = green_default;
+int RED_DUR = red_default;
+int YELLOW_DUR = yellow_default;
 
 int tempGreen;
 int tempYellow;
 int tempRed;
 
-int count1 = 5;
-int count2 = 3;  //default value
+int count1 = red_default;
+int count2 = green_default;  //default value
 void lab3_fsm1(){
 	switch (currentState1){
 		case INIT:
@@ -61,6 +65,12 @@ void lab3_fsm1(){
 				tempYellow = YELLOW_DUR;
 				currentState1 = MAN_RED;
 			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState1 = INIT;
+			}
 			if (count1 <= 0){
 				count1 = GREEN_DUR;
 				currentState1 = AUTO_GREEN;
@@ -80,6 +90,12 @@ void lab3_fsm1(){
 				tempGreen = GREEN_DUR;
 				tempYellow = YELLOW_DUR;
 				currentState1 = MAN_RED;
+			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState1 = INIT;
 			}
 			if (count1 <= 0){
 				count1 = YELLOW_DUR;
@@ -101,6 +117,12 @@ void lab3_fsm1(){
 				tempYellow = YELLOW_DUR;
 				currentState1 = MAN_RED;
 			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState1 = INIT;
+			}
 			if (count1 == 0){
 				count1 = RED_DUR;
 				currentState1 = AUTO_RED;
@@ -111,41 +133,60 @@ void lab3_fsm1(){
 			if (buttonIsPressedO(change_butt)){
 				tempRed++;
 			}
+			if (buttonIsHoldO(change_butt)){
+				tempRed--;
+			}
 			displayNumbers(tempRed, 2);
 			if (buttonIsPressedO(set_butt)){
 				RED_DUR = tempRed;
+				displayNone();
 				currentState1 = MAN_GREEN;			//Khi set xong chuyển luôn sang manual tiếp theo
 			}
 
-			if (buttonIsPressedO(mode_butt)) currentState1 = MAN_GREEN;
+			if (buttonIsPressedO(mode_butt)) {
+				displayNone();
+				currentState1 = MAN_GREEN;
+			}
 			break;
 		case MAN_GREEN:
 			displayAllGreen();
 			if (buttonIsPressedO(change_butt)){
 				tempGreen++;
 			}
-			displayNumbers(tempGreen, 2);
+			if (buttonIsHoldO(change_butt)){
+				tempGreen--;
+			}
+			displayNumbers(tempGreen, 3);
 			if (buttonIsPressedO(set_butt)){
 				GREEN_DUR = tempGreen;
-				currentState1 = MAN_YELLOW;			//Khi set xong chuyển luôn sang manual tiếp theo
+				displayNone();
+				currentState1 = MAN_YELLOW;
 			}
 
-			if (buttonIsPressedO(mode_butt)) currentState1 = MAN_YELLOW;
+			if (buttonIsPressedO(mode_butt)) {
+				displayNone();
+				currentState1 = MAN_YELLOW;
+			}
 			break;
 		case MAN_YELLOW:
 			displayAllYellow();
 			if (buttonIsPressedO(change_butt)){
 				tempYellow++;
 			}
-			displayNumbers(tempGreen, 2);
-			if (buttonIsPressedO(set_butt)){
-				GREEN_DUR = tempGreen;
-				currentState1 = MAN_YELLOW;			//Khi set xong chuyển luôn sang manual tiếp theo
+			if (buttonIsHoldO(change_butt)){
+				tempYellow--;
 			}
-
+			displayNumbers(tempYellow, 4);
+			if (buttonIsPressedO(set_butt)){
+				YELLOW_DUR = tempYellow;
+				displayNone();
+				currentState1 = INIT;
+				currentState2 = INIT;		//cho cả hai
+			}
 			if (buttonIsPressedO(mode_butt)){
-				count1 = RED_DUR;
-				currentState1 = AUTO_RED;
+				displayNone();
+				currentState1 = INIT;
+				currentState2 = INIT;			//bug ở đâu đó quanh đây
 			}
 			break;
 		default:
@@ -174,6 +215,12 @@ void lab3_fsm2(){
 				displayNone();
 				currentState2 = MAN_RED;
 			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState2 = INIT;
+			}
 			if (count2 <= 0){
 				count2 = GREEN_DUR;
 				currentState2 = AUTO_GREEN;
@@ -190,6 +237,12 @@ void lab3_fsm2(){
 			if (buttonIsPressedO(mode_butt)){
 				displayNone();
 				currentState2 = MAN_RED;
+			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState2 = INIT;
 			}
 			if (count2 <= 0){
 				count2 = YELLOW_DUR;
@@ -208,32 +261,25 @@ void lab3_fsm2(){
 				displayNone();
 				currentState2 = MAN_RED;
 			}
+			if (buttonIsHoldO(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				currentState2 = INIT;
+			}
 			if (count2 <= 0){
 				count2 = RED_DUR;
 				currentState2 = AUTO_RED;
 			}
 			break;
 		case MAN_RED:
-
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();						//xóa ở máy 2 là đủ
-				currentState2 = MAN_GREEN;
-			}
+			//everything is done by the first fsm
 			break;
 		case MAN_GREEN:
 
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();
-				currentState2 = MAN_YELLOW;
-			}
 			break;
 		case MAN_YELLOW:
 
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();
-				count2 = GREEN_DUR;
-				currentState2 = AUTO_GREEN;
-			}
 			break;
 		default:
 			break;

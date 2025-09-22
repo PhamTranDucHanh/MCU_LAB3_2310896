@@ -95,10 +95,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  //int test1 = 0, test2 = 0;
-  timerSet(6, 25);
-  timerSet(7, 500);
-  buttonsInitO(GPIOA, BUTTON1_Pin);
+  timerSet(6, 25);		//timer for 7SEG scanning display
+  timerSet(7, 500);		//timer for toggle led in modify modes
+  buttonsInitO(GPIOA, BUTTON1_Pin);		//initialize button
   buttonsInitO(GPIOA, BUTTON2_Pin);
   buttonsInitO(GPIOA, BUTTON3_Pin);
   HAL_GPIO_WritePin(GPIOA, EN1W1_Pin, GPIO_PIN_SET);
@@ -119,12 +118,6 @@ int main(void)
 	  }
 	  lab3_fsm1();
 	  lab3_fsm2();
-
-//	  displayNumbers(test1, test2);
-//	  if (timerFlag(7)){
-//		  timerSet(7, 1000);
-//		  test1++; test2++;
-//	  }
 
     /* USER CODE END WHILE */
 
