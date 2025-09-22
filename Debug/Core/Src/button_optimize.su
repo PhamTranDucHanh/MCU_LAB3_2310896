@@ -1,7 +1,0 @@
-button_optimize.c:48:6:buttonsInitO	16	static
-button_optimize.c:60:5:verifyStateO	16	static
-button_optimize.c:76:6:buttonsFSMO1	16	static
-button_optimize.c:123:6:buttonsFSMO2	16	static
-button_optimize.c:170:6:buttonsFSMO3	16	static
-button_optimize.c:217:5:buttonIsPressedO	16	static
-button_optimize.c:222:5:buttonIsHoldO	16	static
