@@ -6,9 +6,10 @@
  */
 
 #include "lab3_fsm.h"
-#define fsm1_timer 		4
-#define fsm2_timer		5
-#define fsm_dur			500
+#define fsm_timer 		6
+#define time_out_timer	7
+#define fsm_dur			1000
+#define time_out_dur	6000
 
 #define mode_butt		0
 #define change_butt 	1
@@ -20,16 +21,16 @@
 
 typedef enum{
 	INIT,
-	AUTO_RED,
-	AUTO_YELLOW,
-	AUTO_GREEN,
+	RED_GREEN,
+	RED_YELLOW,
+	GREEN_RED,
+	YELLOW_RED,
 	MAN_RED,
 	MAN_GREEN,
 	MAN_YELLOW
 } traffic_state;
 
-traffic_state currentState1 = INIT;
-traffic_state currentState2 = INIT;
+traffic_state fsm_current_state = INIT;
 
 int GREEN_DUR = green_default;
 int RED_DUR = red_default;
@@ -41,152 +42,207 @@ int tempRed;
 
 int count1 = red_default;
 int count2 = green_default;  //default value
-void lab3_fsm1(){
-	switch (currentState1){
+void lab3_fsm(){
+	switch (fsm_current_state){
 		case INIT:
-			timerSet(fsm1_timer, fsm_dur);
+			timerSet(fsm_timer, fsm_dur);
 			displayNone();
 			count1 = RED_DUR;
+			count2 = GREEN_DUR;
 
-			currentState1 = AUTO_RED;
+			fsm_current_state = RED_GREEN;
 			break;
-		case AUTO_RED:
-			displayRed1();
-			if(timerFlag(fsm1_timer)){
-				timerSet(fsm1_timer, fsm_dur);
+		case RED_GREEN:
+			displayRed_Green();
+			if(timerFlag(fsm_timer)){
+				timerSet(fsm_timer, fsm_dur);
 				count1--;
+				count2--;
 			}
 			displayNumbers(count1, count2);
 
-			if (buttonIsPressedO(mode_butt)){
+			if (buttonIsPressed(mode_butt)){
 				displayNone();
 				tempRed = RED_DUR;
 				tempGreen = GREEN_DUR;
 				tempYellow = YELLOW_DUR;
-				currentState1 = MAN_RED;
+				fsm_current_state = MAN_RED;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(set_butt)){
+			if (buttonIsHold(set_butt)){
 				GREEN_DUR = green_default;
 				RED_DUR = red_default;
 				YELLOW_DUR = yellow_default;
-				currentState1 = INIT;
+				fsm_current_state = INIT;
 			}
-			if (count1 <= 0){
+			if (count2 <= 0){
+				count2 = YELLOW_DUR;
+				fsm_current_state = RED_YELLOW;
+			}
+			break;
+		case RED_YELLOW:
+			displayRed_Yellow();
+			if(timerFlag(fsm_timer)){
+				timerSet(fsm_timer, fsm_dur);
+				count1--;
+				count2--;
+			}
+			displayNumbers(count1, count2);
+
+			if (buttonIsPressed(mode_butt)){
+				displayNone();
+				tempRed = RED_DUR;
+				tempGreen = GREEN_DUR;
+				tempYellow = YELLOW_DUR;
+				fsm_current_state = MAN_RED;
+				timerSet(time_out_timer, time_out_dur);
+			}
+			if (buttonIsHold(set_butt)){
+				GREEN_DUR = green_default;
+				RED_DUR = red_default;
+				YELLOW_DUR = yellow_default;
+				fsm_current_state = INIT;
+			}
+			if (count1 <= 0 || count2 <= 0){
 				count1 = GREEN_DUR;
-				currentState1 = AUTO_GREEN;
+				count2 = RED_DUR;
+				fsm_current_state = GREEN_RED;
 			}
 			break;
-		case AUTO_GREEN:
-			displayGreen1();
-			if(timerFlag(fsm1_timer)){
-				timerSet(fsm1_timer, fsm_dur);
+		case GREEN_RED:
+			displayGreen_Red();
+			if(timerFlag(fsm_timer)){
+				timerSet(fsm_timer, fsm_dur);
 				count1--;
+				count2--;
 			}
 			displayNumbers(count1, count2);
 
-			if (buttonIsPressedO(mode_butt)){
+			if (buttonIsPressed(mode_butt)){
 				displayNone();
 				tempRed = RED_DUR;
 				tempGreen = GREEN_DUR;
 				tempYellow = YELLOW_DUR;
-				currentState1 = MAN_RED;
+				fsm_current_state = MAN_RED;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(set_butt)){
+			if (buttonIsHold(set_butt)){
 				GREEN_DUR = green_default;
 				RED_DUR = red_default;
 				YELLOW_DUR = yellow_default;
-				currentState1 = INIT;
+				fsm_current_state = INIT;
 			}
 			if (count1 <= 0){
 				count1 = YELLOW_DUR;
-				currentState1 = AUTO_YELLOW;
+				fsm_current_state = YELLOW_RED;
 			}
 			break;
-		case AUTO_YELLOW:
-			displayYellow1();
-			if(timerFlag(fsm1_timer)){
-				timerSet(fsm1_timer, fsm_dur);
+		case YELLOW_RED:
+			displayYellow_Red();
+			if(timerFlag(fsm_timer)){
+				timerSet(fsm_timer, fsm_dur);
 				count1--;
+				count2--;
 			}
 			displayNumbers(count1, count2);
 
-			if (buttonIsPressedO(mode_butt)){
+			if (buttonIsPressed(mode_butt)){
 				displayNone();
 				tempRed = RED_DUR;
 				tempGreen = GREEN_DUR;
 				tempYellow = YELLOW_DUR;
-				currentState1 = MAN_RED;
+				fsm_current_state = MAN_RED;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(set_butt)){
+			if (buttonIsHold(set_butt)){
 				GREEN_DUR = green_default;
 				RED_DUR = red_default;
 				YELLOW_DUR = yellow_default;
-				currentState1 = INIT;
+				fsm_current_state = INIT;
 			}
-			if (count1 == 0){
+			if (count1 <= 0 || count2 <= 0){
 				count1 = RED_DUR;
-				currentState1 = AUTO_RED;
+				count2 = GREEN_DUR;
+				fsm_current_state = RED_GREEN;
 			}
 			break;
 		case MAN_RED:
 			displayAllRed();
-			if (buttonIsPressedO(change_butt)){
+			if (buttonIsPressed(change_butt)){
 				tempRed++;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(change_butt)){
+			if (buttonIsHold(change_butt)){
 				tempRed--;
+				timerSet(time_out_timer, time_out_dur);
 			}
 			displayNumbers(tempRed, 2);
-			if (buttonIsPressedO(set_butt)){
+
+			if (buttonIsPressed(set_butt)){
 				RED_DUR = tempRed;
 				displayNone();
-				currentState1 = MAN_GREEN;			//Khi set xong chuyển luôn sang manual tiếp theo
+				fsm_current_state = MAN_GREEN;			//Khi set xong chuyển luôn sang manual tiếp theo
+				timerSet(time_out_timer, time_out_dur);
 			}
-
-			if (buttonIsPressedO(mode_butt)) {
+			if (buttonIsPressed(mode_butt)) {
 				displayNone();
-				currentState1 = MAN_GREEN;
+				fsm_current_state = MAN_GREEN;
+				timerSet(time_out_timer, time_out_dur);
+			}
+			if (timerFlag(time_out_timer)){
+				fsm_current_state = INIT;
 			}
 			break;
 		case MAN_GREEN:
 			displayAllGreen();
-			if (buttonIsPressedO(change_butt)){
+			if (buttonIsPressed(change_butt)){
 				tempGreen++;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(change_butt)){
+			if (buttonIsHold(change_butt)){
 				tempGreen--;
+				timerSet(time_out_timer, time_out_dur);
 			}
 			displayNumbers(tempGreen, 3);
-			if (buttonIsPressedO(set_butt)){
+
+			if (buttonIsPressed(set_butt)){
 				GREEN_DUR = tempGreen;
 				displayNone();
-				currentState1 = MAN_YELLOW;
+				fsm_current_state = MAN_YELLOW;
+				timerSet(time_out_timer, time_out_dur);
 			}
 
-			if (buttonIsPressedO(mode_butt)) {
+			if (buttonIsPressed(mode_butt)) {
 				displayNone();
-				currentState1 = MAN_YELLOW;
+				fsm_current_state = MAN_YELLOW;
+			}
+			if (timerFlag(time_out_timer)){
+				fsm_current_state = INIT;
 			}
 			break;
 		case MAN_YELLOW:
 			displayAllYellow();
-			if (buttonIsPressedO(change_butt)){
+			if (buttonIsPressed(change_butt)){
 				tempYellow++;
+				timerSet(time_out_timer, time_out_dur);
 			}
-			if (buttonIsHoldO(change_butt)){
+			if (buttonIsHold(change_butt)){
 				tempYellow--;
+				timerSet(time_out_timer, time_out_dur);
 			}
 			displayNumbers(tempYellow, 4);
-			if (buttonIsPressedO(set_butt)){
+
+			if (buttonIsPressed(set_butt)){
 				YELLOW_DUR = tempYellow;
 				displayNone();
-				currentState1 = INIT;
-				currentState2 = INIT;		//cho cả hai
+				fsm_current_state = INIT;
 			}
-			if (buttonIsPressedO(mode_butt)){
+			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				currentState1 = INIT;
-				currentState2 = INIT;			//bug ở đâu đó quanh đây
+				fsm_current_state = INIT;
+			}
+			if (timerFlag(time_out_timer)){
+				fsm_current_state = INIT;
 			}
 			break;
 		default:
@@ -194,94 +250,3 @@ void lab3_fsm1(){
 	}
 }
 
-void lab3_fsm2(){
-	switch (currentState2){
-		case INIT:
-			timerSet(fsm2_timer, fsm_dur);
-			displayNone();
-			count2 = GREEN_DUR;
-
-			currentState2 = AUTO_GREEN;
-			break;
-		case AUTO_RED:
-			displayRed2();
-			if(timerFlag(fsm2_timer)){
-				timerSet(fsm2_timer, fsm_dur);
-				count2--;
-			}
-			displayNumbers(count1, count2);
-
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();
-				currentState2 = MAN_RED;
-			}
-			if (buttonIsHoldO(set_butt)){
-				GREEN_DUR = green_default;
-				RED_DUR = red_default;
-				YELLOW_DUR = yellow_default;
-				currentState2 = INIT;
-			}
-			if (count2 <= 0){
-				count2 = GREEN_DUR;
-				currentState2 = AUTO_GREEN;
-			}
-			break;
-		case AUTO_GREEN:
-			displayGreen2();
-			if(timerFlag(fsm2_timer)){
-				timerSet(fsm2_timer, fsm_dur);
-				count2--;
-			}
-			displayNumbers(count1, count2);
-
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();
-				currentState2 = MAN_RED;
-			}
-			if (buttonIsHoldO(set_butt)){
-				GREEN_DUR = green_default;
-				RED_DUR = red_default;
-				YELLOW_DUR = yellow_default;
-				currentState2 = INIT;
-			}
-			if (count2 <= 0){
-				count2 = YELLOW_DUR;
-				currentState2 = AUTO_YELLOW;
-			}
-			break;
-		case AUTO_YELLOW:
-			displayYellow2();
-			if(timerFlag(fsm2_timer)){
-				timerSet(fsm2_timer, fsm_dur);
-				count2--;
-			}
-			displayNumbers(count1, count2);
-
-			if (buttonIsPressedO(mode_butt)){
-				displayNone();
-				currentState2 = MAN_RED;
-			}
-			if (buttonIsHoldO(set_butt)){
-				GREEN_DUR = green_default;
-				RED_DUR = red_default;
-				YELLOW_DUR = yellow_default;
-				currentState2 = INIT;
-			}
-			if (count2 <= 0){
-				count2 = RED_DUR;
-				currentState2 = AUTO_RED;
-			}
-			break;
-		case MAN_RED:
-			//everything is done by the first fsm
-			break;
-		case MAN_GREEN:
-
-			break;
-		case MAN_YELLOW:
-
-			break;
-		default:
-			break;
-	}
-}

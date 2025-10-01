@@ -7,11 +7,6 @@
 
 #include "display.h"
 
-#define seg_timer 	6
-#define blink_timer 7
-#define seg_dur		250
-#define blink_dur	500
-
 	  uint16_t segPins1[7] = {a1_Pin, b1_Pin, c1_Pin, d1_Pin, e1_Pin, f1_Pin, g1_Pin};
 	  uint16_t segPins2[7] = {a2_Pin, b2_Pin, c2_Pin, d2_Pin, e2_Pin, f2_Pin, g2_Pin};
 	  uint16_t enablePins1[2] = {EN1W1_Pin, EN2W1_Pin};
@@ -72,41 +67,46 @@ void displayNumbers(int num1, int num2){
 	}
 }
 
-void displayRed1(){
+void displayRed_Green(){  //W1_W2
 	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_SET);
-}
 
-void displayYellow1(){
-	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_SET);
-}
-
-void displayGreen1(){
-	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_RESET);
-}
-
-void displayRed2(){
-	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, YELLOW2_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_RESET);
 }
 
-void displayYellow2(){
+void displayRed_Yellow(){
+	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_SET);
+
 	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, YELLOW2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_SET);
 }
 
-void displayGreen2(){
-	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_SET);
+void displayGreen_Red(){
+	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_RESET);
+
+	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, YELLOW2_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_SET);
 }
+
+void displayYellow_Red(){
+	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_SET);
+
+	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_SET);
+}
+
 
 void displayNone(){
 	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_SET);

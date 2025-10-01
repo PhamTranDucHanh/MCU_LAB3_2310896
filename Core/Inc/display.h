@@ -9,14 +9,16 @@
 #define INC_DISPLAY_H_
 
 #include "main.h"
+#define seg_timer 	8
+#define blink_timer 9
+#define seg_dur		250
+#define blink_dur	500
 
 void displayNumbers(int num1, int num2);
-void displayRed1();
-void displayGreen1();
-void displayYellow1();
-void displayRed2();
-void displayGreen2();
-void displayYellow2();
+void displayRed_Green();
+void displayRed_Yellow();
+void displayGreen_Red();
+void displayYellow_Red();
 void displayNone();
 void displayAllRed();
 void displayAllGreen();

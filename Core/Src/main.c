@@ -95,29 +95,28 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  timerSet(6, 25);		//timer for 7SEG scanning display
-  timerSet(7, 500);		//timer for toggle led in modify modes
-  buttonsInitO(GPIOA, BUTTON1_Pin);		//initialize button
-  buttonsInitO(GPIOA, BUTTON2_Pin);
-  buttonsInitO(GPIOA, BUTTON3_Pin);
+  timerSet(seg_timer, seg_dur);		//timer for 7SEG scanning display
+  timerSet(blink_timer, blink_dur);		//timer for toggle led in modify modes
+  buttonsInit(GPIOA, BUTTON1_Pin);		//initialize button
+  buttonsInit(GPIOA, BUTTON2_Pin);
+  buttonsInit(GPIOA, BUTTON3_Pin);
   HAL_GPIO_WritePin(GPIOA, EN1W1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, EN2W1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, EN1W2_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, EN2W2_Pin, GPIO_PIN_SET);
-
+  displayNone();
   while (1)
   {
-	  buttonsFSMO1(0);
-	  buttonsFSMO2(1);
-	  buttonsFSMO3(2);
-	  if (buttonIsPressedO(0) || buttonIsPressedO(1) || buttonIsPressedO(2)){
+	  buttonsFSM1(0);
+	  buttonsFSM2(1);
+	  buttonsFSM3(2);
+	  if (buttonIsPressed(0) || buttonIsPressed(1) || buttonIsPressed(2)){
 		 HAL_GPIO_TogglePin(GPIOA, LED_RED_Pin);
 	  }
-	  if (buttonIsHoldO(0) || buttonIsHoldO(1) || buttonIsHoldO(2)){
+	  if (buttonIsHold(0) || buttonIsHold(1) || buttonIsHold(2)){
 		  HAL_GPIO_TogglePin(GPIOA, LED_RED_Pin);
 	  }
-	  lab3_fsm1();
-	  lab3_fsm2();
+	  lab3_fsm();
 
     /* USER CODE END WHILE */
 

@@ -33,8 +33,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
-//#include "button.h"
-#include "button_optimize.h"
+#include "button.h"
 #include "lab3_fsm.h"
 #include "display.h"
 /* USER CODE END Includes */
