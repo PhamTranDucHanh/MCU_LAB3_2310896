@@ -13,7 +13,7 @@ This method provides robust debouncing by requiring three consecutive, identical
 
 Reference implementation:
 ```c
-int verifyStateO(int i){
+int verifyState(int i){
     if (timerFlag(debounce_timer[i])){
         timerSet(debounce_timer[i], DEBOUNCE_DUR);
         validPress[i] = filterPress1[i];
@@ -44,7 +44,7 @@ The diagram above illustrates the finite state machine (FSM) used for robust but
 - **HOLD**: Button has been held for at least 1 second.
 - **POST-HOLD**: Button continues to be held after the initial hold period.
 
-Transitions between states are triggered by the result of `verifyStateO(i)`, which checks the current button input, and by timing conditions (e.g., holding for 1 second).  
+Transitions between states are triggered by the result of `verifyState(i)`, which checks the current button input, and by timing conditions (e.g., holding for 1 second).  
 - A transition from RELEASE to PRESS occurs when a press is detected.
 - If the button remains pressed, the FSM moves to PRE-HOLD, then to HOLD after 1 second.
 - Continuing to hold the button leads to POST-HOLD, with further transitions based on time and release events.
@@ -57,37 +57,123 @@ In this implementation, both press and hold signals are detected as rising edges
 After a hold is detected (button held for 1 second), if the button continues to be held, the FSM will generate a new hold edge every subsequent 1 second. This allows for repeated hold actions (e.g., auto-increment, scrolling) as long as the button remains pressed.
 
 **Interface usage:**  
-- `void buttonsFSMO1(int i);`, `void buttonsFSMO2(int i);`, `void buttonsFSMO3(int i);`  
+- `void buttonsFSM1(int i);`, `void buttonsFSM2(int i);`, `void buttonsFSM3(int i);`  
   Call these functions regularly (e.g., in the main loop) to update the FSM for each button.
-- `int buttonIsPressedO(int index);`  
+- `int buttonIsPressed(int index);`  
   Returns `1` if a press event (edge) is detected for the specified button.
-- `int buttonIsHoldO(int index);`  
+- `int buttonIsHold(int index);`  
   Returns `1` if a hold event (edge) is detected for the specified button (including repeated edges every 1 second if the button is continuously held).
 
 By using these interfaces, your application can reliably respond to user input, distinguishing between short presses and long holds, and triggering actions only on the correct signal edges, including repeated hold events.
 
 ---
 
-## Modifiable Traffic Light FSM
-<img width="1611" height="913" alt="image" src="https://github.com/user-attachments/assets/1b12df30-31d9-4dc6-8d3f-a8cca99c82b4" />
+##  Modifiable Traffic Light FSM
 
-The diagram above shows the finite state machine (FSM) structure used to implement a modifiable traffic light system in this lab. The FSM is designed to handle both automatic and manual modes, allowing the user to adjust the duration of each light (red, green, yellow) using button inputs.
+<img width="1355" height="788" alt="image" src="https://github.com/user-attachments/assets/eb32e705-fe74-42eb-bf18-e6afc010b99f" />
 
-**FSM States:**
-- **INIT**: Initialization state, sets up default durations and prepares the system.
-- **AUTO_RED / AUTO_GREEN / AUTO_YELLOW**: Automatic cycling through red, green, and yellow lights based on their respective durations. The system decrements counters and switches states when the timer expires.
-- **MAN_RED / MAN_GREEN / MAN_YELLOW**: Manual adjustment states for each light. In these states, the user can increase or decrease the duration using the change button (press to increase, hold to decrease), and save the new value with the set button.
+### States:
+1. **INIT**:
+   - Initialization state.
+   - Sets up default durations for red, green, and yellow lights.
+   - Prepares the system for operation.
+   - Transitions to `RED_GREEN` state after initialization.
 
-**Button Functions:**
-- **Mode button**: Switches between automatic and manual modes when pressed.
-- **Change button**: In manual mode, increases the duration when pressed and decreases it when held.
-- **Set button**: Saves the current temporary value and moves to the next manual adjustment state.
+2. **RED_GREEN**:
+   - Automatic mode: Red light for one direction, green light for the other.
+   - Decrements counters (`count1` for red, `count2` for green) based on timer expiration.
+   - Transitions:
+     - To `RED_YELLOW` when the green light counter (`count2`) reaches zero.
+     - To `MAN_RED` when the mode button is pressed.
+     - To `INIT` when the set button is held (resets durations to default).
 
-**Transitions:**
-- The FSM transitions between states based on button events and timer expirations. For example, pressing the mode button in any AUTO state switches to manual adjustment, while holding the set button in any state resets all durations to their default values.
-- After adjusting and saving each duration in manual mode, the FSM moves to the next color or returns to INIT.
+3. **RED_YELLOW**:
+   - Automatic mode: Red light for one direction, yellow light for the other.
+   - Decrements counters (`count1` for red, `count2` for yellow) based on timer expiration.
+   - Transitions:
+     - To `GREEN_RED` when counters reach zero.
+     - To `MAN_RED` when the mode button is pressed.
+     - To `INIT` when the set button is held.
 
-This modular FSM approach makes the traffic light system flexible and user-friendly, allowing real-time adjustment of light durations and seamless switching between automatic and manual operation. The code structure closely follows the state diagram, with clear separation of logic for each state and event, ensuring maintainability and scalability for future enhancements.
+4. **GREEN_RED**:
+   - Automatic mode: Green light for one direction, red light for the other.
+   - Decrements counters (`count1` for green, `count2` for red) based on timer expiration.
+   - Transitions:
+     - To `YELLOW_RED` when the green light counter (`count1`) reaches zero.
+     - To `MAN_RED` when the mode button is pressed.
+     - To `INIT` when the set button is held.
+
+5. **YELLOW_RED**:
+   - Automatic mode: Yellow light for one direction, red light for the other.
+   - Decrements counters (`count1` for yellow, `count2` for red) based on timer expiration.
+   - Transitions:
+     - To `RED_GREEN` when counters reach zero.
+     - To `MAN_RED` when the mode button is pressed.
+     - To `INIT` when the set button is held.
+
+6. **MAN_RED**:
+   - Manual mode: Adjust the duration of the red light.
+   - User can:
+     - Increase duration using the change button (press).
+     - Decrease duration using the change button (hold).
+     - Save the new duration using the set button.
+   - Transitions:
+     - To `MAN_GREEN` after saving the red light duration.
+     - To `MAN_GREEN` when the mode button is pressed.
+     - To `INIT` if the timeout timer expires.
+
+7. **MAN_GREEN**:
+   - Manual mode: Adjust the duration of the green light.
+   - User can:
+     - Increase duration using the change button (press).
+     - Decrease duration using the change button (hold).
+     - Save the new duration using the set button.
+   - Transitions:
+     - To `MAN_YELLOW` after saving the green light duration.
+     - To `MAN_YELLOW` when the mode button is pressed.
+     - To `INIT` if the timeout timer expires.
+
+8. **MAN_YELLOW**:
+   - Manual mode: Adjust the duration of the yellow light.
+   - User can:
+     - Increase duration using the change button (press).
+     - Decrease duration using the change button (hold).
+     - Save the new duration using the set button.
+   - Transitions:
+     - To `INIT` after saving the yellow light duration.
+     - To `INIT` when the mode button is pressed.
+     - To `INIT` if the timeout timer expires.
+
+### Transitions:
+- **Mode Button**: Switches between automatic and manual modes.
+- **Change Button**: Adjusts the duration of the current light in manual mode.
+- **Set Button**: Saves the current duration and moves to the next manual adjustment state.
+- **Timeout Timer**: Returns to `INIT` if no user input is detected for a predefined duration.
+
+### Button Functions
+
+1. **Mode Button**:
+   - Changes between automatic and manual modes when pressed.
+
+2. **Change Button**:
+   - Increases the duration when pressed.
+   - Decreases the duration when held.
+
+3. **Set Button**:
+   - Saves the current temporary value.
+   - Moves to the next manual adjustment state.
+
+### Default Durations
+- **Red Light**: 5 seconds.
+- **Green Light**: 3 seconds.
+- **Yellow Light**: 2 seconds.
+
+**Note**: While the system is running in automatic mode, if the **Set button** is held (pressed and held down), the durations for all lights will reset to their default values (Red: 5 seconds, Green: 3 seconds, Yellow: 2 seconds), and the FSM will transition back to the `INIT` state.
+
+### Features
+- **Automatic Mode**: Cycles through red, green, and yellow lights based on their durations.
+- **Manual Mode**: Allows real-time adjustment of light durations.
+- **Timeout Mechanism**: Returns to `INIT` if no user input is detected in manual mode.
 
 ---
 
