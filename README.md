@@ -68,9 +68,10 @@ By using these interfaces, your application can reliably respond to user input, 
 
 ---
 
+
 ##  Modifiable Traffic Light FSM
 
-<img width="1355" height="788" alt="image" src="https://github.com/user-attachments/assets/eb32e705-fe74-42eb-bf18-e6afc010b99f" />
+<img width="1361" height="766" alt="image" src="https://github.com/user-attachments/assets/3ab53480-34c6-45af-af34-456c1fb81c73" />
 
 ### States:
 1. **INIT**:
@@ -84,7 +85,7 @@ By using these interfaces, your application can reliably respond to user input, 
    - Decrements counters (`count1` for red, `count2` for green) based on timer expiration.
    - Transitions:
      - To `RED_YELLOW` when the green light counter (`count2`) reaches zero.
-     - To `MAN_RED` when the mode button is pressed.
+     - To `MAN_RED` when the mode button is pressed (enters manual adjustment).
      - To `INIT` when the set button is held (resets durations to default).
 
 3. **RED_YELLOW**:
@@ -111,7 +112,7 @@ By using these interfaces, your application can reliably respond to user input, 
      - To `MAN_RED` when the mode button is pressed.
      - To `INIT` when the set button is held.
 
-6. **MAN_RED**:
+6. **MAN_RED** (Mode 2):
    - Manual mode: Adjust the duration of the red light.
    - User can:
      - Increase duration using the change button (press).
@@ -120,9 +121,9 @@ By using these interfaces, your application can reliably respond to user input, 
    - Transitions:
      - To `MAN_GREEN` after saving the red light duration.
      - To `MAN_GREEN` when the mode button is pressed.
-     - To `INIT` if the timeout timer expires.
+     - To `CHECK_DUR` if the timeout timer expires.
 
-7. **MAN_GREEN**:
+7. **MAN_GREEN** (Mode 3):
    - Manual mode: Adjust the duration of the green light.
    - User can:
      - Increase duration using the change button (press).
@@ -131,24 +132,37 @@ By using these interfaces, your application can reliably respond to user input, 
    - Transitions:
      - To `MAN_YELLOW` after saving the green light duration.
      - To `MAN_YELLOW` when the mode button is pressed.
-     - To `INIT` if the timeout timer expires.
+     - To `CHECK_DUR` if the timeout timer expires.
 
-8. **MAN_YELLOW**:
+8. **MAN_YELLOW** (Mode 4):
    - Manual mode: Adjust the duration of the yellow light.
    - User can:
      - Increase duration using the change button (press).
      - Decrease duration using the change button (hold).
      - Save the new duration using the set button.
    - Transitions:
-     - To `INIT` after saving the yellow light duration.
-     - To `INIT` when the mode button is pressed.
-     - To `INIT` if the timeout timer expires.
+     - To `CHECK_DUR` after saving the yellow light duration.
+     - To `CHECK_DUR` when the mode button is pressed.
+     - To `CHECK_DUR` if the timeout timer expires.
+
+9. **CHECK_DUR**:
+   - State to verify the set of durations entered by the user before using them in automatic mode.
+   - All LEDs and 7-segment displays are turned off to indicate checking.
+   - If the durations do not satisfy the constraints:
+     - `RED_DUR >= 3`
+     - `GREEN_DUR >= 2`
+     - `YELLOW_DUR >= 1`
+     - `RED_DUR - GREEN_DUR == YELLOW_DUR`
+     then the previous valid durations are restored.
+   - After 1 second, transitions to `INIT` to start automatic mode with the checked durations.
 
 ### Transitions:
 - **Mode Button**: Switches between automatic and manual modes.
 - **Change Button**: Adjusts the duration of the current light in manual mode.
 - **Set Button**: Saves the current duration and moves to the next manual adjustment state.
-- **Timeout Timer**: Returns to `INIT` if no user input is detected for a predefined duration.
+- **Timeout Timer**: If no user input is detected for a predefined duration in manual mode, transitions to `CHECK_DUR` before returning to automatic mode.
+
+**Note:** All transitions from `MAN_YELLOW` (Mode 4) or any timeout in manual modes will always go through `CHECK_DUR` before returning to automatic mode. This ensures the system checks and validates the durations before using them.
 
 ### Button Functions
 
@@ -173,7 +187,16 @@ By using these interfaces, your application can reliably respond to user input, 
 ### Features
 - **Automatic Mode**: Cycles through red, green, and yellow lights based on their durations.
 - **Manual Mode**: Allows real-time adjustment of light durations.
-- **Timeout Mechanism**: Returns to `INIT` if no user input is detected in manual mode.
+- **CHECK_DUR State**: Validates the set durations before using them in automatic mode. All LEDs and 7-segment displays are off during this state.
+- **Timeout Mechanism**: Returns to `CHECK_DUR` if no user input is detected in manual mode, then transitions to automatic mode.
+
+### Constraints for Durations
+- `RED_DUR >= 3`
+- `GREEN_DUR >= 2`
+- `YELLOW_DUR >= 1`
+- `RED_DUR - GREEN_DUR == YELLOW_DUR`
+
+If these constraints are not met, the system will restore the previous valid durations.
 
 ---
 
