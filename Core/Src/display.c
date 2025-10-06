@@ -66,7 +66,12 @@ void displayNumbers(int num1, int num2){
 		}
 	}
 }
-
+void numbersOff (){
+	HAL_GPIO_WritePin(GPIOA, EN1W1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, EN2W1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, EN1W2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, EN2W2_Pin, GPIO_PIN_RESET);
+}
 void displayRed_Green(){  //W1_W2
 	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_SET);
@@ -143,4 +148,14 @@ void displayAllYellow(){
 		HAL_GPIO_TogglePin(GPIOA, YELLOW1_Pin);
 		HAL_GPIO_TogglePin(GPIOA, YELLOW2_Pin);
 	}
+}
+
+void displayAll(){
+	HAL_GPIO_WritePin(GPIOA, RED1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GREEN1_Pin, GPIO_PIN_RESET);
+
+	HAL_GPIO_WritePin(GPIOA, RED2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, YELLOW2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, GREEN2_Pin, GPIO_PIN_RESET);
 }

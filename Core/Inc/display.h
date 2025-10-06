@@ -15,6 +15,7 @@
 #define blink_dur	500
 
 void displayNumbers(int num1, int num2);
+void numbersOff();
 void displayRed_Green();
 void displayRed_Yellow();
 void displayGreen_Red();
@@ -23,5 +24,6 @@ void displayNone();
 void displayAllRed();
 void displayAllGreen();
 void displayAllYellow();
+void displayAll();
 
 #endif /* INC_DISPLAY_H_ */

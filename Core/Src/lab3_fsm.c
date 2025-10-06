@@ -27,21 +27,32 @@ typedef enum{
 	YELLOW_RED,
 	MAN_RED,
 	MAN_GREEN,
-	MAN_YELLOW
+	MAN_YELLOW,
+	CHECK_DUR
 } traffic_state;
 
 traffic_state fsm_current_state = INIT;
 
-int GREEN_DUR = green_default;
 int RED_DUR = red_default;
+int GREEN_DUR = green_default;
 int YELLOW_DUR = yellow_default;
 
 int tempGreen;
 int tempYellow;
 int tempRed;
 
+int backupRed;
+int backupGreen;
+int backupYellow;
+
 int count1 = red_default;
 int count2 = green_default;  //default value
+void restore_duration(){
+	RED_DUR = backupRed;
+	GREEN_DUR = backupGreen;
+	YELLOW_DUR = backupYellow;
+}
+
 void lab3_fsm(){
 	switch (fsm_current_state){
 		case INIT:
@@ -63,9 +74,9 @@ void lab3_fsm(){
 
 			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				tempRed = RED_DUR;
-				tempGreen = GREEN_DUR;
-				tempYellow = YELLOW_DUR;
+				backupRed = tempRed = RED_DUR;
+				backupGreen = tempGreen = GREEN_DUR;
+				backupYellow = tempYellow = YELLOW_DUR;
 				fsm_current_state = MAN_RED;
 				timerSet(time_out_timer, time_out_dur);
 			}
@@ -91,9 +102,9 @@ void lab3_fsm(){
 
 			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				tempRed = RED_DUR;
-				tempGreen = GREEN_DUR;
-				tempYellow = YELLOW_DUR;
+				backupRed = tempRed = RED_DUR;
+				backupGreen = tempGreen = GREEN_DUR;
+				backupYellow = tempYellow = YELLOW_DUR;
 				fsm_current_state = MAN_RED;
 				timerSet(time_out_timer, time_out_dur);
 			}
@@ -120,9 +131,9 @@ void lab3_fsm(){
 
 			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				tempRed = RED_DUR;
-				tempGreen = GREEN_DUR;
-				tempYellow = YELLOW_DUR;
+				backupRed = tempRed = RED_DUR;
+				backupGreen = tempGreen = GREEN_DUR;
+				backupYellow = tempYellow = YELLOW_DUR;
 				fsm_current_state = MAN_RED;
 				timerSet(time_out_timer, time_out_dur);
 			}
@@ -148,9 +159,9 @@ void lab3_fsm(){
 
 			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				tempRed = RED_DUR;
-				tempGreen = GREEN_DUR;
-				tempYellow = YELLOW_DUR;
+				backupRed = tempRed = RED_DUR;
+				backupGreen = tempGreen = GREEN_DUR;
+				backupYellow = tempYellow = YELLOW_DUR;
 				fsm_current_state = MAN_RED;
 				timerSet(time_out_timer, time_out_dur);
 			}
@@ -190,7 +201,8 @@ void lab3_fsm(){
 				timerSet(time_out_timer, time_out_dur);
 			}
 			if (timerFlag(time_out_timer)){
-				fsm_current_state = INIT;
+				timerSet(fsm_timer, fsm_dur);
+				fsm_current_state = CHECK_DUR;
 			}
 			break;
 		case MAN_GREEN:
@@ -217,7 +229,8 @@ void lab3_fsm(){
 				fsm_current_state = MAN_YELLOW;
 			}
 			if (timerFlag(time_out_timer)){
-				fsm_current_state = INIT;
+				timerSet(fsm_timer, fsm_dur);
+				fsm_current_state = CHECK_DUR;
 			}
 			break;
 		case MAN_YELLOW:
@@ -235,13 +248,29 @@ void lab3_fsm(){
 			if (buttonIsPressed(set_butt)){
 				YELLOW_DUR = tempYellow;
 				displayNone();
-				fsm_current_state = INIT;
+				timerSet(fsm_timer, fsm_dur);
+				fsm_current_state = CHECK_DUR;
 			}
 			if (buttonIsPressed(mode_butt)){
 				displayNone();
-				fsm_current_state = INIT;
+				timerSet(fsm_timer, fsm_dur);
+				fsm_current_state = CHECK_DUR;
 			}
 			if (timerFlag(time_out_timer)){
+				timerSet(fsm_timer, fsm_dur);
+				fsm_current_state = CHECK_DUR;
+			}
+			break;
+		case CHECK_DUR:
+			displayAll();
+			numbersOff();
+			if (RED_DUR < 3 || GREEN_DUR < 2 || YELLOW_DUR < 1
+				|| (RED_DUR - GREEN_DUR != YELLOW_DUR) )
+			{
+				restore_duration();
+			}
+
+			if (timerFlag(fsm_timer)){
 				fsm_current_state = INIT;
 			}
 			break;
