@@ -5,6 +5,11 @@ I am a student of the Microcontroller course at HCMUT. In this lab, I continued 
 
 ---
 
+## Demo video (Google Drive link)
+https://drive.google.com/file/d/1_mhcp9KD0Gh-E9pva6tFR-ycQ44c0vx_/view?usp=sharing
+
+---
+
 ## Button Debouncing
 
 To ensure accurate button press detection and eliminate false triggers caused by mechanical bouncing, each button uses a dedicated `software_timer` (reused from Lab 2) to sample the GPIO input every 10ms. The input signal (with pull-up configuration) is read and shifted through three consecutive variables: `filterPress2`, `filterPress1`, and `validPress`. Only when all three variables consistently register the same state (either pressed or released) is the button state considered stable and valid—meaning the button has maintained a consistent signal for at least 30ms.
